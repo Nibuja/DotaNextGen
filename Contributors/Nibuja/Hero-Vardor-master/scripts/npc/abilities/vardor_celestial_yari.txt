@@ -1,69 +1,204 @@
 "vardor_celestial_yari"
 {
-	// General
-	//-------------------------------------------------------------------------------------------------------------
-	"BaseClass"				"ability_datadriven"
-	"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMIDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET  | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
-	"AbilityType"                   "DOTA_ABILITY_TYPE_ULTIMATE"
-	"FightRecapLevel"               "2"
-	"AbilityTextureName"			"clinkz_searing_arrows"
-	"AbilityCastPoint"				"0.0 0.0 0.0 0.0"
+    // General
+    //-------------------------------------------------------------------------------------------------------------
+    "BaseClass"             "ability_datadriven"
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
+    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+    "AbilityType"                   "DOTA_ABILITY_TYPE_ULTIMATE"
+    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO"
+    "AbilityUnitDamageType"         "DAMAGE_TYPE_PURE"
+    "FightRecapLevel"               "2"
+    "AbilityTextureName"            "clinkz_searing_arrows"
+    "AbilityCastPoint"              "0.2 0.2 0.2"
 
-	"AbilityCooldown"				"80.0 70.0 60.0"
-	"precache"
-	{
-		"particle"  "particles/items_fx/black_king_bar_overhead.vpcf"
-	}
+    "AbilityCooldown"               "80.0 70.0 60.0"
+    "precache"
+    {
+        "particle"  "particles/units/heroes/hero_clinkz/clinkz_searing_arrow.vpcf"
+        "particle"  "particles/units/heroes/hero_ogre_magi/ogre_magi_ignite_debuff_b.vpcf"
+        "particle"  "particles/econ/events/coal/coal_projectile_explosion_e.vpcf"
+        "soundfile" "soundevents/game_sounds_heroes/game_sounds_clinkz.vsndevts"
+    }
 
-	"AbilitySpecial"
-	{
-		"01"
-		{
-			"var_type"			"FIELD_INTEGER"
-			"duration"			"30 30 30"
-		}
-	}
+    "AbilityCastRange"              "1300"
+    "AbilityManaCost"               "100 150 200"
 
-	"OnSpellStart"
-	{
-		"ApplyModifier"
-		{
-			"ModifierName"	"modifier_celestial"
-			"Target" 		"CASTER"
-			"Duration"		"%duration"
-		}
-	}
-	"Modifiers"
-	{
-		"modifier_celestial"
-		{
-			"Passive"			"0"
-			"IsHidden"			"0"
-			"IsDebuff"			"0"
+    //Special
+    //-------------------------------------------------------------------------------------------------------------
 
-			"OnCreated"
-			{
-				"AttachEffect"
-				{
-					"EffectName"        "particles/items_fx/black_king_bar_overhead.vpcf"
-					"EffectAttachType"  "follow_overhead"
-					"Target"            "CASTER"
-				}
-				"RunScript"
-				{
-					"ScriptFile"	"heroes/hero_vardor/vardor_celestial_yari"
-					"Function"		"Celestial"
-					"duration"		"%duration"
-				}
-			}
-			"OnDestroy"
-			{
-				"RunScript"
-				{
-					"ScriptFile"	"heroes/hero_vardor/vardor_celestial_yari"
-					"Function"		"CelestialDestroy"
-				}
-			}
-		}
-	}
+    "AbilitySpecial"
+    {
+        "01"
+        {
+            "var_type"          "FIELD_INTEGER"
+            "duration"          "10 10 10"
+        }
+        "02"
+        {
+            "var_type"          "FIELD_INTEGER"
+            "vision_radius"     "200"
+        }
+        "03"
+        {
+            "var_type"          "FIELD_INTEGER"
+            "projectile_speed"      "1800"
+        }
+        "04"
+        {
+            "var_type"          "FIELD_INTEGER"
+            "stack_divisor" "200 150 100"
+        }
+        "05"
+        {
+            "var_type"          "FIELD_INTEGER"
+            "health_damage"         "10 15 20"
+        }
+    }
+
+
+    "OnSpellStart"
+    {
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_celestial"
+            "Target"        "CASTER"
+            "Duration"      "%duration"
+        }
+        "TrackingProjectile"
+        {
+            "Target"            "TARGET"
+            "EffectName"        "particles/units/heroes/hero_clinkz/clinkz_searing_arrow.vpcf"
+            "Dodgeable"         "1"
+            "ProvidesVision"    "1"
+            "VisionRadius"      "%vision_radius"
+            "MoveSpeed"         "%projectile_speed"
+            "SourceAttachment"  "DOTA_PROJECTILE_ATTACHMENT_ATTACK_1"
+        }
+        "FireSound"
+        {
+            "EffectName"    "Hero_Clinkz.SearingArrow"
+            "Target"        "CASTER"
+        }
+    }
+    "OnProjectileHitUnit"
+    {
+        "DeleteOnHit"   "1"
+        "ApplyModifier"
+        {
+            "ModifierName"  "modifier_curse"
+            "Target"        "TARGET"
+            "Duration"      "%duration"
+        }
+        "RunScript"
+        {
+            "ScriptFile"    "heroes/hero_vardor/vardor_celestial_yari"
+            "Function"      "CelestialCurse"
+            "Target"        "TARGET"
+        }
+        "FireEffect"
+        {
+            "EffectName"        "particles/econ/events/coal/coal_projectile_explosion_e.vpcf"
+            "EffectAttachType"  "follow_origin"
+            "Target"            "TARGET"
+        }
+        "FireSound"
+        {
+            "EffectName"    "Hero_Clinkz.SearingArrows.Impact"
+            "Target"        "TARGET"
+        }
+    }
+    "Modifiers"
+    {
+        "modifier_celestial"
+        {
+            "Passive"           "0"
+            "IsHidden"          "0"
+            "IsDebuff"          "0"
+
+            "OnDestroy"
+            {
+                "RemoveModifier"
+                {
+                    "ModifierName"  "modifier_celestial"
+                    "Target"        "CASTER"
+                }
+                "RemoveModifier"
+                {
+                    "ModifierName"  "modifier_curse"
+                    "Target"        "TARGET"
+                }
+                "RemoveModifier"
+                {
+                    "ModifierName"  "modifier_max_health"
+                    "Target"        "TARGET"
+                }
+                "RemoveModifier"
+                {
+                    "ModifierName"  "modifier_health"
+                    "Target"        "CASTER"
+                }
+            }
+        }
+        "modifier_curse"
+        {
+            "Passive"           "0"
+            "IsHidden"          "0"
+            "IsDebuff"          "1"
+        
+            "EffectName"        "particles/units/heroes/hero_ogre_magi/ogre_magi_ignite_debuff_b.vpcf"
+            "EffectAttachType"  "follow_overhead"
+        
+            "OnTakeDamage"
+            // "%attack_damage" is set to the damage value after mitigation
+            {
+                "RunScript"
+                {
+                    "ScriptFile"    "heroes/hero_vardor/vardor_celestial_yari"
+                    "Function"      "CurseTrigger"
+                    "Target"        "TARGET"
+                    "attack_damage"     "%attack_damage"
+                }
+            }
+            "OnDestroy"
+            {
+                "RemoveModifier"
+                {
+                    "ModifierName"  "modifier_celestial"
+                    "Target"        "CASTER"
+                }
+                "RemoveModifier"
+                {
+                    "ModifierName"  "modifier_curse"
+                    "Target"        "TARGET"
+                }
+                "RemoveModifier"
+                {
+                    "ModifierName"  "modifier_max_health"
+                    "Target"        "TARGET"
+                }
+                "RemoveModifier"
+                {
+                    "ModifierName"  "modifier_health"
+                    "Target"        "CASTER"
+                }
+                "RunScript"
+                {
+                    "ScriptFile"    "heroes/hero_vardor/vardor_celestial_yari"
+                    "Function"      "CurseEndDamage"
+                }
+            }
+        }
+        "modifier_max_health"
+        {
+            "IsHidden"          "1"
+            "EffectName"        "particles/units/heroes/hero_ogre_magi/ogre_magi_ignite_debuff_b.vpcf"
+            "EffectAttachType"  "follow_overhead"
+        }
+        "modifier_health"
+        {
+            "IsHidden"          "1"
+        }
+    }
 }
+

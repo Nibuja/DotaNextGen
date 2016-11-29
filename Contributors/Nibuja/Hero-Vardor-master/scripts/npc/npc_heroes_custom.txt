@@ -7,10 +7,11 @@
 	{
 		"override_hero"				"npc_dota_hero_phantom_lancer"			// Hero to override
 		"Ability1"					"vardor_piercing_shot"			// Ability 1
-		"Ability2"					"vardor_graceful_jump"			// Ability 2
+		"Ability2"					"vardor_graceful_jump_weak"			// Ability 2
 		"Ability3"					"vardor_mental_thrusts"			// Ability 3
 		"Ability4"					"vardor_celestial_yari"			// Ultimate
 		"Ability6"					"vardor_return_of_the_yari"		// Bonus Ability
+		"Ability7"					"vardor_graceful_jump"		// Bonus Ability 2
 		"VisionNighttimeRange"		"1800"									// Range of vision at night time.
 	
 		"Model"		"models/heroes/phantom_lancer/phantom_lancer.vmdl"

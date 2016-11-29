@@ -2,7 +2,9 @@
 {
 "BaseClass"	"npc_dota_creature"// Class of entity of link to.
 //"Model"		"models\props_structures\graveyard_fence007.vmdl"
-"Model"		"models\heroes\phantom_assassin\weapon_fx.vmdl"
+//"Model"		"models\heroes\phantom_assassin\weapon_fx.vmdl"
+"Model"		"models/props_debris/spike_fence001a.vmdl"
+
 
 
 // Attack

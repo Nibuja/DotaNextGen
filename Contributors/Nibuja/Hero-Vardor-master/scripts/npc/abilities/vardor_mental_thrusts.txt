@@ -16,116 +16,77 @@
     "precache"
     {
         "particle" "particles/units/heroes/hero_mirana/mirana_spell_arrow.vpcf"
-        "soundfile"                     "soundevents/game_sounds_heroes/game_sounds_mirana.vsndevts"
+        "soundfile" "soundevents/game_sounds_heroes/game_sounds_mirana.vsndevts"
     }
     
                
         //Stats
         //-------------------------------------------------------------------------------------------------------------
 
-        "AbilityCastAnimation"                  		"ACT_DOTA_ATTACK"
+    "AbilityCastAnimation"                  		"ACT_DOTA_ATTACK"
 
-        "AbilitySpecial"
-        {
-        	"01"
-        	{
-        		"var_type"			"FIELD_INTEGER"
-        		"reduction"			"-3 -6 -9 -15"
-        	}
-        	"02"
-        	{
-        		"var_type"			"FIELD_FLOAT"
-        		"duration"		"6.0 10.0 15.0 30.0"
-        	}
-        }
-        "OnUpgrade"
-        {
-            "RunScript"
-            {
-                "ScriptFile"    "heroes/hero_vardor/vardor_mental_thrusts.lua"
-                "Function"        "OnUpgrade"
-            }
-        }
-        "OnOwnerSpawned"
-        {
-            "RunScript"
-            {
-                "ScriptFile"    "heroes/hero_vardor/vardor_mental_thrusts.lua"
-                "Function"        "OnUpgrade"
-            }
-        }
+    "AbilitySpecial"
+    {
+    	"01"
+    	{
+    		"var_type"			"FIELD_INTEGER"
+    		"reduction"			"-3 -6 -9 -15"
+    	}
+    	"02"
+    	{
+    		"var_type"			"FIELD_FLOAT"
+    		"duration"		"6.0 10.0 15.0 30.0"
+    	}
+    }
 
-        "Modifiers"
-        {
-        	"modifier_mental_thrusts_caster_datadriven"
+    "Modifiers"
+    {
+    	"modifier_mental_thrusts_caster"
         	{
-        		"Passive"			"1"
-        		"IsHidden"			"1"
-        		"IsDebuff"			"0"
+    	    "Passive"			"1"
+    		"IsHidden"			"1"
+    		"IsDebuff"			"0"
 
         
-        		"OnAttackLanded"
-        		// "%attack_damage" is set to the damage value before mitigation
+        	"OnAttackLanded"
+        	{
+        		"RunScript"
         		{
-        			"RunScript"
-        			{
-        				"ScriptFile"	"heroes/hero_vardor/vardor_mental_thrusts.lua"
-        				"Function"		"MentalThrustsHit"
-        				"HealthManaLost"	"%reduction"
-        			}
-        		}
-        		"ApplyModifier"
-        		{
-        			"ModifierName"	"mental_thrusts_debuff"
-        			"Target" 		"TARGET"
+        			"ScriptFile"	"heroes/hero_vardor/vardor_mental_thrusts.lua"
+        			"Function"		"MentalThrustsHit"
+        			"HealthManaLost"	"%reduction"
         		}
         	}
-        	"modifier_mental_thrusts_target_datadriven"
-        	{
-        		"Passive"			"0"
-        		"IsHidden"			"0"
-        		"IsDebuff"			"1"
-        		"TextureName"		"default"
-                "Duration"  "%duration"
-
-				"EffectName"				"particles/units/heroes/hero_ursa/ursa_fury_swipes_debuff.vpcf"
-				"EffectAttachType"			"follow_overhead"        		
-
-        		"OnCreated"
-        		{
-        			"AttachEffect"
-        			{
-						"Target"				"TARGET"
-						"EffectName"			"particles/units/heroes/hero_ursa/ursa_fury_swipes.vpcf"
-						"EffectAttachType"		"follow_overhead"
-        			}
-        		}	
-		
-        	}
-        	"mental_thrusts_debuff"
-        	{
-        		"IsHidden"		"1"
-        		"Passive"		"0"
-        		"IsDebuff"		"0"
-                "Duration"  "%duration"
-
-        		"Attributes"	"MODIFIER_ATTRIBUTE_MULTIPLE | MODIFIER_ATTRIBUTE_PERMANENT"
-        		"Properties"
-        		{
-        			"MODIFIER_PROPERTY_HEALTH_BONUS" "%reduction"
-        			"MODIFIER_PROPERTY_MANA_BONUS" "%reduction" 
-        		}        		
-        	}
-            "modifier_hold_yari"
-            {
-                "Passive"            "0"
-                "IsHidden"            "0"
-                "IsDebuff"            "0"
-       
-            }	
         }
-        
+        "modifier_mental_thrusts_debuff"
+        {
+        	"IsHidden"		"0"
+        	"Passive"		"0"
+        	"IsDebuff"		"1"
 
+            "OnCreated"
+            {
+                "AttachEffect"
+                {
+                    "Target"                "TARGET"
+                    "EffectName"            "particles/units/heroes/hero_ursa/ursa_fury_swipes.vpcf"
+                    "EffectAttachType"      "follow_overhead"
+                }
+            }
+    	}
+        "modifier_mental_thrusts_reduction"
+        {
+            "IsHidden"      "1"
+            "Passive"       "0"
+            "IsDebuff"      "0"
 
+            "Attributes"    "MODIFIER_ATTRIBUTE_MULTIPLE"
 
+            "Properties"
+            {
+                "MODIFIER_PROPERTY_HEALTH_BONUS" "%reduction"
+                "MODIFIER_PROPERTY_MANA_BONUS" "%reduction" 
+            }               
+        }
+    }
 }

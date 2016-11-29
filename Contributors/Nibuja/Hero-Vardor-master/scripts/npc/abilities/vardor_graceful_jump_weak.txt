@@ -1,12 +1,12 @@
 
 
 
-"vardor_graceful_jump"
+"vardor_graceful_jump_weak"
 {
     // General
     //-------------------------------------------------------------------------------------------------------------
     "BaseClass"                     "ability_datadriven"
-    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
     "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
     "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
     "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"   
@@ -46,7 +46,7 @@
         "01"
         {
             "var_type"                  "FIELD_FLOAT"
-            "range"                 "1200.0 1200.0 1200.0 1200.0"
+            "range"                 "600.0"
         }
         "02"
         {
@@ -56,26 +56,29 @@
         "03"
         {
             "var_type"                  "FIELD_FLOAT"
-            "max_range"             "2000"
+            "max_range"             "1000"
         }
         "04"
         {
             "var_type"                  "FIELD_INTEGER"
-            "damage"                "100 175 250 325"
+            "damage"                "50"
         }
-        "05"
-        {
-            "var_type"                  "FIELD_INTEGER"
-            "extra_damage"          "3 6 9 15"
-        }
+    }
 
+    "OnUpgrade"
+    {
+        "RunScript"
+        {
+            "ScriptFile"    "heroes/hero_vardor/vardor_graceful_jump_weak.lua"
+            "Function"        "OnUpgrade"
+        }
     }
 
     "OnSpellStart"
     {
         "RunScript"
         {
-            "ScriptFile"    "heroes/hero_vardor/vardor_graceful_jump.lua"
+            "ScriptFile"    "heroes/hero_vardor/vardor_graceful_jump_weak.lua"
             "Function"      "Jump"
             "Target"        "TARGET"
             "MaxBlinkRange"     "%range"
@@ -97,7 +100,7 @@
                 "ApplyMotionController"
                 {
                     "Target"        "CASTER"
-                    "ScriptFile"    "heroes/hero_vardor/vardor_graceful_jump.lua"
+                    "ScriptFile"    "heroes/hero_vardor/vardor_graceful_jump_weak.lua"
                     "HorizontalControlFunction" "JumpHorizonal"
                     "VerticalControlFunction"   "JumpVertical"
                 }
@@ -107,19 +110,6 @@
                 "EffectName"    "Hero_Mirana.Leap.Owlcat"
                 "Target"        "CASTER"
             }
-        }
-        "modifier_stun"
-        {
-            "Passive"            "0"
-            "IsHidden"           "0"
-            "IsDebuff"           "1"
-            "EffectName"            "particles/generic_gameplay/generic_stunned.vpcf"
-            "EffectAttachType"      "follow_overhead"
-            "OverrideAnimation"     "ACT_DOTA_DISABLED"
-            "States"
-            {
-                "MODIFIER_STATE_STUNNED" "MODIFIER_STATE_VALUE_ENABLED"
-            }     
         }
     }
 }

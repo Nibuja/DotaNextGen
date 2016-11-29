@@ -2,73 +2,208 @@
 {
 	"vardor_celestial_yari"
 	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"BaseClass"				"ability_datadriven"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_IMMIDIATE | DOTA_ABILITY_BEHAVIOR_NO_TARGET  | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
-		"AbilityType"                   "DOTA_ABILITY_TYPE_ULTIMATE"
-		"FightRecapLevel"               "2"
-		"AbilityTextureName"			"clinkz_searing_arrows"
-		"AbilityCastPoint"				"0.0 0.0 0.0 0.0"
+	    // General
+	    //-------------------------------------------------------------------------------------------------------------
+	    "BaseClass"             "ability_datadriven"
+	    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
+	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+	    "AbilityType"                   "DOTA_ABILITY_TYPE_ULTIMATE"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO"
+	    "AbilityUnitDamageType"         "DAMAGE_TYPE_PURE"
+	    "FightRecapLevel"               "2"
+	    "AbilityTextureName"            "clinkz_searing_arrows"
+	    "AbilityCastPoint"              "0.2 0.2 0.2"
 	
-		"AbilityCooldown"				"80.0 70.0 60.0"
-		"precache"
-		{
-			"particle"  "particles/items_fx/black_king_bar_overhead.vpcf"
-		}
+	    "AbilityCooldown"               "80.0 70.0 60.0"
+	    "precache"
+	    {
+	        "particle"  "particles/units/heroes/hero_clinkz/clinkz_searing_arrow.vpcf"
+	        "particle"  "particles/units/heroes/hero_ogre_magi/ogre_magi_ignite_debuff_b.vpcf"
+	        "particle"  "particles/econ/events/coal/coal_projectile_explosion_e.vpcf"
+	        "soundfile" "soundevents/game_sounds_heroes/game_sounds_clinkz.vsndevts"
+	    }
 	
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"duration"			"30 30 30"
-			}
-		}
+	    "AbilityCastRange"              "1300"
+	    "AbilityManaCost"               "100 150 200"
 	
-		"OnSpellStart"
-		{
-			"ApplyModifier"
-			{
-				"ModifierName"	"modifier_celestial"
-				"Target" 		"CASTER"
-				"Duration"		"%duration"
-			}
-		}
-		"Modifiers"
-		{
-			"modifier_celestial"
-			{
-				"Passive"			"0"
-				"IsHidden"			"0"
-				"IsDebuff"			"0"
+	    //Special
+	    //-------------------------------------------------------------------------------------------------------------
 	
-				"OnCreated"
-				{
-					"AttachEffect"
-					{
-						"EffectName"        "particles/items_fx/black_king_bar_overhead.vpcf"
-						"EffectAttachType"  "follow_overhead"
-						"Target"            "CASTER"
-					}
-					"RunScript"
-					{
-						"ScriptFile"	"heroes/hero_vardor/vardor_celestial_yari"
-						"Function"		"Celestial"
-						"duration"		"%duration"
-					}
-				}
-				"OnDestroy"
-				{
-					"RunScript"
-					{
-						"ScriptFile"	"heroes/hero_vardor/vardor_celestial_yari"
-						"Function"		"CelestialDestroy"
-					}
-				}
-			}
-		}
+	    "AbilitySpecial"
+	    {
+	        "01"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "duration"          "10 10 10"
+	        }
+	        "02"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "vision_radius"     "200"
+	        }
+	        "03"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "projectile_speed"      "1800"
+	        }
+	        "04"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "stack_divisor" "200 150 100"
+	        }
+	        "05"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "health_damage"         "10 15 20"
+	        }
+	    }
+	
+	
+	    "OnSpellStart"
+	    {
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_celestial"
+	            "Target"        "CASTER"
+	            "Duration"      "%duration"
+	        }
+	        "TrackingProjectile"
+	        {
+	            "Target"            "TARGET"
+	            "EffectName"        "particles/units/heroes/hero_clinkz/clinkz_searing_arrow.vpcf"
+	            "Dodgeable"         "1"
+	            "ProvidesVision"    "1"
+	            "VisionRadius"      "%vision_radius"
+	            "MoveSpeed"         "%projectile_speed"
+	            "SourceAttachment"  "DOTA_PROJECTILE_ATTACHMENT_ATTACK_1"
+	        }
+	        "FireSound"
+	        {
+	            "EffectName"    "Hero_Clinkz.SearingArrow"
+	            "Target"        "CASTER"
+	        }
+	    }
+	    "OnProjectileHitUnit"
+	    {
+	        "DeleteOnHit"   "1"
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_curse"
+	            "Target"        "TARGET"
+	            "Duration"      "%duration"
+	        }
+	        "RunScript"
+	        {
+	            "ScriptFile"    "heroes/hero_vardor/vardor_celestial_yari"
+	            "Function"      "CelestialCurse"
+	            "Target"        "TARGET"
+	        }
+	        "FireEffect"
+	        {
+	            "EffectName"        "particles/econ/events/coal/coal_projectile_explosion_e.vpcf"
+	            "EffectAttachType"  "follow_origin"
+	            "Target"            "TARGET"
+	        }
+	        "FireSound"
+	        {
+	            "EffectName"    "Hero_Clinkz.SearingArrows.Impact"
+	            "Target"        "TARGET"
+	        }
+	    }
+	    "Modifiers"
+	    {
+	        "modifier_celestial"
+	        {
+	            "Passive"           "0"
+	            "IsHidden"          "0"
+	            "IsDebuff"          "0"
+	
+	            "OnDestroy"
+	            {
+	                "RemoveModifier"
+	                {
+	                    "ModifierName"  "modifier_celestial"
+	                    "Target"        "CASTER"
+	                }
+	                "RemoveModifier"
+	                {
+	                    "ModifierName"  "modifier_curse"
+	                    "Target"        "TARGET"
+	                }
+	                "RemoveModifier"
+	                {
+	                    "ModifierName"  "modifier_max_health"
+	                    "Target"        "TARGET"
+	                }
+	                "RemoveModifier"
+	                {
+	                    "ModifierName"  "modifier_health"
+	                    "Target"        "CASTER"
+	                }
+	            }
+	        }
+	        "modifier_curse"
+	        {
+	            "Passive"           "0"
+	            "IsHidden"          "0"
+	            "IsDebuff"          "1"
+	        
+	            "EffectName"        "particles/units/heroes/hero_ogre_magi/ogre_magi_ignite_debuff_b.vpcf"
+	            "EffectAttachType"  "follow_overhead"
+	        
+	            "OnTakeDamage"
+	            // "%attack_damage" is set to the damage value after mitigation
+	            {
+	                "RunScript"
+	                {
+	                    "ScriptFile"    "heroes/hero_vardor/vardor_celestial_yari"
+	                    "Function"      "CurseTrigger"
+	                    "Target"        "TARGET"
+	                    "attack_damage"     "%attack_damage"
+	                }
+	            }
+	            "OnDestroy"
+	            {
+	                "RemoveModifier"
+	                {
+	                    "ModifierName"  "modifier_celestial"
+	                    "Target"        "CASTER"
+	                }
+	                "RemoveModifier"
+	                {
+	                    "ModifierName"  "modifier_curse"
+	                    "Target"        "TARGET"
+	                }
+	                "RemoveModifier"
+	                {
+	                    "ModifierName"  "modifier_max_health"
+	                    "Target"        "TARGET"
+	                }
+	                "RemoveModifier"
+	                {
+	                    "ModifierName"  "modifier_health"
+	                    "Target"        "CASTER"
+	                }
+	                "RunScript"
+	                {
+	                    "ScriptFile"    "heroes/hero_vardor/vardor_celestial_yari"
+	                    "Function"      "CurseEndDamage"
+	                }
+	            }
+	        }
+	        "modifier_max_health"
+	        {
+	            "IsHidden"          "1"
+	            "EffectName"        "particles/units/heroes/hero_ogre_magi/ogre_magi_ignite_debuff_b.vpcf"
+	            "EffectAttachType"  "follow_overhead"
+	        }
+	        "modifier_health"
+	        {
+	            "IsHidden"          "1"
+	        }
+	    }
 	}
+	
 	
 	
 	
@@ -77,7 +212,7 @@
 	    // General
 	    //-------------------------------------------------------------------------------------------------------------
 	    "BaseClass"                     "ability_datadriven"
-	    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
+	    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK | DOTA_ABILITY_BEHAVIOR_HIDDEN"
 	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
 	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
 	    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"   
@@ -152,21 +287,6 @@
 	            "MaxBlinkRange"     "%range"
 	            "BlinkRange"        "%range"
 	        }
-	        "DelayedAction"
-	        {
-	            "Delay"     "5"
-	            "Action"    
-	            {
-	                "RunScript"
-	                {
-	                    "ScriptFile"    "heroes/hero_vardor/vardor_graceful_jump.lua"
-	                    "Function"      "JumpCancel"
-	                    "Target"        "TARGET"
-	                    "MaxBlinkRange"     "%range"
-	                    "BlinkRange"        "%range"
-	                }
-	            }
-	        }
 	    }
 	    "Modifiers"
 	    {
@@ -211,8 +331,125 @@
 	}
 	
 	        
+	
+	
+	
+	"vardor_graceful_jump_weak"
+	{
+	    // General
+	    //-------------------------------------------------------------------------------------------------------------
+	    "BaseClass"                     "ability_datadriven"
+	    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
+	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_BOTH"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"   
+	    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_YES" 
+	    "FightRecapLevel"               "1"
+	    "AbilityTextureName"            "slark_pounce"
+	
+	    "precache"
+	    {
+	        "particle"  "particles/units/heroes/hero_warlock/warlock_rainofchaos_start_ripple_fb_mid.vpcf"
+	        "particle"  "particles/generic_gameplay/generic_stunned.vpcf"
+	        "soundfile" "soundevents/game_sounds_heroes/game_sounds_mirana.vsndevts"
+	    }
+	
+	    // Casting
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilityCastPoint"              "0.3 0.3 0.3 0.3"
+	
+	    // Time     
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilityCooldown"               "20.0 20.0 15.0 8.0"
+	
+	    // Cost
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilityManaCost"               "80 100 120 140"        
+	    
+	    // Cast Range
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilityCastRange"              "%range"
+	
+	    "AbilityDamage"                 "%damage"
+	    
+	    // Special
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilitySpecial"
+	    {
+	        "01"
+	        {
+	            "var_type"                  "FIELD_FLOAT"
+	            "range"                 "600.0"
+	        }
+	        "02"
+	        {
+	            "var_type"                  "FIELD_FLOAT"
+	            "speed"                 "1000.0"
+	        }
+	        "03"
+	        {
+	            "var_type"                  "FIELD_FLOAT"
+	            "max_range"             "1000"
+	        }
+	        "04"
+	        {
+	            "var_type"                  "FIELD_INTEGER"
+	            "damage"                "50"
+	        }
+	    }
+	
+	    "OnUpgrade"
+	    {
+	        "RunScript"
+	        {
+	            "ScriptFile"    "heroes/hero_vardor/vardor_graceful_jump_weak.lua"
+	            "Function"        "OnUpgrade"
+	        }
+	    }
+	
+	    "OnSpellStart"
+	    {
+	        "RunScript"
+	        {
+	            "ScriptFile"    "heroes/hero_vardor/vardor_graceful_jump_weak.lua"
+	            "Function"      "Jump"
+	            "Target"        "TARGET"
+	            "MaxBlinkRange"     "%range"
+	            "BlinkRange"        "%range"
+	        }
+	    }
+	    "Modifiers"
+	    {
+	        "modifier_movement"
+	        {
+	            "Passive"           "0"
+	            "IsHidden"          "1"
+	            "IsDebuff"          "0"
+	    
+	
+	    
+	            "OnCreated"
+	            {
+	                "ApplyMotionController"
+	                {
+	                    "Target"        "CASTER"
+	                    "ScriptFile"    "heroes/hero_vardor/vardor_graceful_jump_weak.lua"
+	                    "HorizontalControlFunction" "JumpHorizonal"
+	                    "VerticalControlFunction"   "JumpVertical"
+	                }
+	            }
+	            "FireSound"
+	            {
+	                "EffectName"    "Hero_Mirana.Leap.Owlcat"
+	                "Target"        "CASTER"
+	            }
+	        }
+	    }
+	}
+	
+	        
 	//=================================================================================================================
-	// Phantom Lancer: Mental Thrusts
+	// Vardor: Mental Thrusts
 	//=================================================================================================================
 	"vardor_mental_thrusts"
 	{
@@ -229,393 +466,358 @@
 	    "precache"
 	    {
 	        "particle" "particles/units/heroes/hero_mirana/mirana_spell_arrow.vpcf"
-	        "soundfile"                     "soundevents/game_sounds_heroes/game_sounds_mirana.vsndevts"
+	        "soundfile" "soundevents/game_sounds_heroes/game_sounds_mirana.vsndevts"
 	    }
 	    
 	               
 	        //Stats
 	        //-------------------------------------------------------------------------------------------------------------
 	
-	        "AbilityCastAnimation"                  		"ACT_DOTA_ATTACK"
+	    "AbilityCastAnimation"                  		"ACT_DOTA_ATTACK"
 	
-	        "AbilitySpecial"
-	        {
-	        	"01"
-	        	{
-	        		"var_type"			"FIELD_INTEGER"
-	        		"reduction"			"-3 -6 -9 -15"
-	        	}
-	        	"02"
-	        	{
-	        		"var_type"			"FIELD_FLOAT"
-	        		"duration"		"6.0 10.0 15.0 30.0"
-	        	}
-	        }
-	        "OnUpgrade"
-	        {
-	            "RunScript"
-	            {
-	                "ScriptFile"    "heroes/hero_vardor/vardor_mental_thrusts.lua"
-	                "Function"        "OnUpgrade"
-	            }
-	        }
-	        "OnOwnerSpawned"
-	        {
-	            "RunScript"
-	            {
-	                "ScriptFile"    "heroes/hero_vardor/vardor_mental_thrusts.lua"
-	                "Function"        "OnUpgrade"
-	            }
-	        }
+	    "AbilitySpecial"
+	    {
+	    	"01"
+	    	{
+	    		"var_type"			"FIELD_INTEGER"
+	    		"reduction"			"-3 -6 -9 -15"
+	    	}
+	    	"02"
+	    	{
+	    		"var_type"			"FIELD_FLOAT"
+	    		"duration"		"6.0 10.0 15.0 30.0"
+	    	}
+	    }
 	
-	        "Modifiers"
-	        {
-	        	"modifier_mental_thrusts_caster_datadriven"
+	    "Modifiers"
+	    {
+	    	"modifier_mental_thrusts_caster"
 	        	{
-	        		"Passive"			"1"
-	        		"IsHidden"			"1"
-	        		"IsDebuff"			"0"
+	    	    "Passive"			"1"
+	    		"IsHidden"			"1"
+	    		"IsDebuff"			"0"
 	
 	        
-	        		"OnAttackLanded"
-	        		// "%attack_damage" is set to the damage value before mitigation
+	        	"OnAttackLanded"
+	        	{
+	        		"RunScript"
 	        		{
-	        			"RunScript"
-	        			{
-	        				"ScriptFile"	"heroes/hero_vardor/vardor_mental_thrusts.lua"
-	        				"Function"		"MentalThrustsHit"
-	        				"HealthManaLost"	"%reduction"
-	        			}
-	        		}
-	        		"ApplyModifier"
-	        		{
-	        			"ModifierName"	"mental_thrusts_debuff"
-	        			"Target" 		"TARGET"
+	        			"ScriptFile"	"heroes/hero_vardor/vardor_mental_thrusts.lua"
+	        			"Function"		"MentalThrustsHit"
+	        			"HealthManaLost"	"%reduction"
 	        		}
 	        	}
-	        	"modifier_mental_thrusts_target_datadriven"
-	        	{
-	        		"Passive"			"0"
-	        		"IsHidden"			"0"
-	        		"IsDebuff"			"1"
-	        		"TextureName"		"default"
-	                "Duration"  "%duration"
-	
-					"EffectName"				"particles/units/heroes/hero_ursa/ursa_fury_swipes_debuff.vpcf"
-					"EffectAttachType"			"follow_overhead"        		
-	
-	        		"OnCreated"
-	        		{
-	        			"AttachEffect"
-	        			{
-							"Target"				"TARGET"
-							"EffectName"			"particles/units/heroes/hero_ursa/ursa_fury_swipes.vpcf"
-							"EffectAttachType"		"follow_overhead"
-	        			}
-	        		}	
-			
-	        	}
-	        	"mental_thrusts_debuff"
-	        	{
-	        		"IsHidden"		"1"
-	        		"Passive"		"0"
-	        		"IsDebuff"		"0"
-	                "Duration"  "%duration"
-	
-	        		"Attributes"	"MODIFIER_ATTRIBUTE_MULTIPLE | MODIFIER_ATTRIBUTE_PERMANENT"
-	        		"Properties"
-	        		{
-	        			"MODIFIER_PROPERTY_HEALTH_BONUS" "%reduction"
-	        			"MODIFIER_PROPERTY_MANA_BONUS" "%reduction" 
-	        		}        		
-	        	}
-	            "modifier_hold_yari"
-	            {
-	                "Passive"            "0"
-	                "IsHidden"            "0"
-	                "IsDebuff"            "0"
-	       
-	            }	
 	        }
-	        
+	        "modifier_mental_thrusts_debuff"
+	        {
+	        	"IsHidden"		"0"
+	        	"Passive"		"0"
+	        	"IsDebuff"		"1"
 	
+	            "OnCreated"
+	            {
+	                "AttachEffect"
+	                {
+	                    "Target"                "TARGET"
+	                    "EffectName"            "particles/units/heroes/hero_ursa/ursa_fury_swipes.vpcf"
+	                    "EffectAttachType"      "follow_overhead"
+	                }
+	            }
+	    	}
+	        "modifier_mental_thrusts_reduction"
+	        {
+	            "IsHidden"      "1"
+	            "Passive"       "0"
+	            "IsDebuff"      "0"
 	
+	            "Attributes"    "MODIFIER_ATTRIBUTE_MULTIPLE"
 	
+	            "Properties"
+	            {
+	                "MODIFIER_PROPERTY_HEALTH_BONUS" "%reduction"
+	                "MODIFIER_PROPERTY_MANA_BONUS" "%reduction" 
+	            }               
+	        }
+	    }
 	}
 	"vardor_piercing_shot"
 	{
-		// General
-		//-------------------------------------------------------------------------------------------------------------
-		"BaseClass"				"ability_datadriven"
-		"AbilityBehavior"				"DOTA_ABILITY_BEHAVIOR_POINT | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
-		"AbilityUnitTargetTeam"			"DOTA_UNIT_TARGET_TEAM_ENEMY"
-		"AbilityUnitTargetType"			"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
-		"AbilityUnitDamageType"			"DAMAGE_TYPE_MAGICAL"	
-		"SpellImmunityType"				"SPELL_IMMUNITY_ENEMIES_NO" 
-		"FightRecapLevel"				"1"
-		"AbilityTextureName"			"phantom_lancer_spirit_lance"
+	    // General
+	    //-------------------------------------------------------------------------------------------------------------
+	    "BaseClass"             "ability_datadriven"
+	    "AbilityBehavior"               "DOTA_ABILITY_BEHAVIOR_POINT| DOTA_ABILITY_BEHAVIOR_UNIT_TARGET | DOTA_ABILITY_BEHAVIOR_DONT_RESUME_ATTACK"
+	    "AbilityUnitTargetTeam"         "DOTA_UNIT_TARGET_TEAM_ENEMY"
+	    "AbilityUnitTargetType"         "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	    "AbilityUnitDamageType"         "DAMAGE_TYPE_MAGICAL"   
+	    "SpellImmunityType"             "SPELL_IMMUNITY_ENEMIES_NO" 
+	    "FightRecapLevel"               "1"
+	    "AbilityTextureName"            "phantom_lancer_spirit_lance"
 	
-		"precache"
-		{
-			"particle"  "particles/units/heroes/hero_mirana/mirana_spell_arrow.vpcf"
-			"particle"	"particles/units/heroes/hero_enchantress/enchantress_impetus.vpcf"
-			"particle"	"particles/units/heroes/hero_slark/slark_pounce_weapon.vpcf"
-			"particle"	"particles/econ/items/warlock/warlock_staff_hellborn/warlock_upheaval_hellborn_debuff.vpcf"
-			"particle"	"particles/units/heroes/hero_lina/lina_spell_light_strike_array_ring.vpcf"
-			"soundfile" "soundevents/game_sounds_heroes/game_sounds_vardor.vsndevts"
-		}
+	    "precache"
+	    {
+	        "particle"  "particles/units/heroes/hero_mirana/mirana_spell_arrow.vpcf"
+	        "particle"  "particles/units/heroes/hero_enchantress/enchantress_impetus.vpcf"
+	        "particle"  "particles/econ/items/warlock/warlock_staff_hellborn/warlock_upheaval_hellborn_debuff.vpcf"
+	        "particle"  "particles/units/heroes/hero_lina/lina_spell_light_strike_array_ring.vpcf"
+	        "soundfile" "soundevents/game_sounds_heroes/game_sounds_vardor.vsndevts"
+	    }
 	
-		// Casting
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastPoint"				"0.3 0.3 0.3 0.3"
+	    // Casting
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilityCastPoint"              "0.3 0.3 0.3 0.3"
 	
-		// Time		
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCooldown"				"7.0 7.0 7.0 7.0"
+	    // Time     
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilityCooldown"               "7.0 7.0 7.0 7.0"
 	
-		// Damage.
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityDamage"					"%damage"
+	    // Damage.
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilityDamage"                 "%damage"
 	
-		// Cost
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityManaCost"				"125 130 135 140"		
-		
-		// Cast Range
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilityCastRange"				"750"
-		"AOERadius"          		"%AOE"
-		
-		// Special
-		//-------------------------------------------------------------------------------------------------------------
-		"AbilitySpecial"
-		{
-			"01"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"damage"			"50 100 150 200"
-			}
-			"02"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"duration"			"2 2 3 3"
-			}
-			"03"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"vision_radius"			"400"
-			}
-			"04"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"projectile_speed"			"1500"
-			}
-			"05"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"projectile_range"			"800"
-			}
-			"06"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"AOE"			"300"
-			}
-			"07"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"radius"			"300"
-			}
-			"08"
-			{
-				"var_type"			"FIELD_FLOAT"
-				"duration_spear"	"7.0 7.0 7.0 7.0"
-			}
-			"09"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"slow"				"-10 -20 -30 -40"
-			}
-			"10"
-			{
-				"var_type"			"FIELD_INTEGER"
-				"cooldown_reduction"		"3 5 7"
-			}
-		}
-		"OnUpgrade"
-		{
-			"RunScript"
-			{
-				"ScriptFile"	"heroes/hero_vardor/vardor_piercing_shot.lua"
-				"Function"		"OnUpgrade"
-				"sub_ability_name" "vardor_return_of_the_yari"
-			}
-		}
-		"OnSpellStart"
-		{
-			"FireSound"
-			{
-				"EffectName"	"Hero_PhantomLancer.SpiritLance.Throw"
-				"Target" 		"CASTER"
-			}
-			"RunScript"
-			{
-				"ScriptFile"				"heroes/hero_vardor/vardor_piercing_shot.lua"
-				"Function"					"PiercingShotCast"
-				"lance_projectile" 			"particles/units/heroes/hero_mirana/mirana_spell_arrow.vpcf"
-				"lance_projectile_tracking"	"particles/units/heroes/hero_enchantress/enchantress_impetus.vpcf"
-				"Target" 					"POINT"
-			}
-			"ApplyModifier"
-			{
-				"ModifierName"	"modifier_yari"
-				"Target" 		"CASTER"
-				"Duration"		"%duration_spear"
-			}
-		}
-		"OnProjectileHitUnit"
-		{
-			"DeleteOnHit"	"0"
-			
-			
-		}
-		"OnProjectileFinish"
-		{
-			"FireSound"
-			{
-				"EffectName"	"Hero_PhantomLancer.SpiritLance.Impact"
-				"Target" 		"CASTER"
-			}		
-			"RunScript"
-			{
-				"ScriptFile"	"heroes/hero_vardor/vardor_piercing_shot.lua"
-				"Function"		"LanceHit"
-			}
-		}
-		"Modifiers"
-		{
-			"modifier_prevent_movement"
-			{
-				"Passive"			"0"
-				"IsHidden"			"0"
-				"IsDebuff"			"1"
-		
-				"EffectName"		"particles\econ\items\warlock\warlock_staff_hellborn\warlock_upheaval_hellborn_debuff.vpcf"
-				"EffectAttachType"	"follow_origin"
-		
+	    // Cost
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilityManaCost"               "125 130 135 140"       
+	    
+	    // Cast Range
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilityCastRange"              "750"
+	    "AOERadius"                 "%AOE"
+	    
+	    // Special
+	    //-------------------------------------------------------------------------------------------------------------
+	    "AbilitySpecial"
+	    {
+	        "01"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "damage"            "50 100 150 200"
+	        }
+	        "02"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "duration"          "2 2 3 3"
+	        }
+	        "03"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "vision_radius"         "400"
+	        }
+	        "04"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "projectile_speed"          "1500"
+	        }
+	        "05"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "projectile_range"          "800"
+	        }
+	        "06"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "AOE"           "300"
+	        }
+	        "07"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "radius"            "300"
+	        }
+	        "08"
+	        {
+	            "var_type"          "FIELD_FLOAT"
+	            "duration_spear"    "7.0 7.0 7.0 7.0"
+	        }
+	        "09"
+	        {
+	            "var_type"          "FIELD_INTEGER"
+	            "slow"              "-10 -20 -30 -40"
+	        }
+	        "10"
+	        {
+	            "var_type"          "FIELD_FLOAT"
+	            "think_interval"    "1.7 1.2 0.9 0.7"
+	        }
+	
+	    }
+	    "OnUpgrade"
+	    {
+	        "RunScript"
+	        {
+	            "ScriptFile"    "heroes/hero_vardor/vardor_piercing_shot.lua"
+	            "Function"      "OnUpgrade"
+	            "sub_ability_name" "vardor_return_of_the_yari"
+	        }
+	    }
+	    "OnSpellStart"
+	    {
+	        "FireSound"
+	        {
+	            "EffectName"    "Hero_PhantomLancer.SpiritLance.Throw"
+	            "Target"        "CASTER"
+	        }
+	        "RunScript"
+	        {
+	            "ScriptFile"                "heroes/hero_vardor/vardor_piercing_shot.lua"
+	            "Function"                  "PiercingShotCastHero"
+	            "lance_projectile_tracking" "particles/units/heroes/hero_enchantress/enchantress_impetus.vpcf"
+	            "Target"                    "TARGET"
+	            "Indicator"                 "2"
+	        }
+	        "RunScript"
+	        {
+	            "ScriptFile"                "heroes/hero_vardor/vardor_piercing_shot.lua"
+	            "Function"                  "PiercingShotCastPoint"
+	            "lance_projectile"          "particles/units/heroes/hero_mirana/mirana_spell_arrow.vpcf"
+	            "Target"                    "POINT"
+	            "Indicator"                 "1"
+	
+	        }
+	        "ApplyModifier"
+	        {
+	            "ModifierName"  "modifier_yari"
+	            "Target"        "CASTER"
+	            "Duration"      "%duration_spear"
+	        }
+	        "ApplyModifier"
+	        {
+	            "ModifierName"    "modifier_test"
+	            "Target"         "TARGET"
+	            "Duration"        "%duration"
+	        }
+	    }
+	    "OnProjectileHitUnit"
+	    {
+	        "DeleteOnHit"   "0"
+	        
+	    }
+	    "OnProjectileFinish"
+	    {
+	        "FireSound"
+	        {
+	            "EffectName"    "Hero_PhantomLancer.SpiritLance.Impact"
+	            "Target"        "CASTER"
+	        }       
+	        "RunScript"
+	        {
+	            "ScriptFile"    "heroes/hero_vardor/vardor_piercing_shot.lua"
+	            "Function"      "LanceHit"
+	        }
+	    }
+	    "Modifiers"
+	    {
+	        "modifier_prevent_movement"
+	        {
+	            "Passive"           "0"
+	            "IsHidden"          "0"
+	            "IsDebuff"          "1"
+	    
+	            "EffectName"        "particles\econ\items\warlock\warlock_staff_hellborn\warlock_upheaval_hellborn_debuff.vpcf"
+	            "EffectAttachType"  "follow_origin"
+	    
 	            "States"
 	            {
 	                "MODIFIER_STATE_ROOTED"     "MODIFIER_STATE_VALUE_ENABLED"
 	                "MODIFIER_STATE_INVISIBLE"  "MODIFIER_STATE_VALUE_DISABLED"
 	            }
-			}
-			"modifier_dummy_health"
-			{
-				"Passive"			"0"
-				"IsHidden"			"1"
-				"IsDebuff"			"0"
+	        }
+	        "modifier_dummy_health"
+	        {
+	            "Passive"           "0"
+	            "IsHidden"          "1"
+	            "IsDebuff"          "0"
 	
-		
+	    
 	            "States"
 	            {
-	                "MODIFIER_STATE_NO_HEALTH_BAR"        	"MODIFIER_STATE_VALUE_ENABLED"
-	                //"MODIFIER_STATE_INVULNERABLE"			"MODIFIER_STATE_VALUE_ENABLED"
-	                "MODIFIER_STATE_NOT_ON_MINIMAP"			"MODIFIER_STATE_VALUE_ENABLED"
+	                "MODIFIER_STATE_NO_HEALTH_BAR"          "MODIFIER_STATE_VALUE_ENABLED"
+	                //"MODIFIER_STATE_INVULNERABLE"         "MODIFIER_STATE_VALUE_ENABLED"
+	                "MODIFIER_STATE_NOT_ON_MINIMAP"         "MODIFIER_STATE_VALUE_ENABLED"
 	
 	
 	            }
-			}
-			"modifier_dummy_slow_aura"
-			{
-				"Passive"			"0"
-				"IsHidden"			"0"
-				"IsDebuff"			"0"
-				"Aura" 				"modifier_slow_aura"
-				"Aura_Radius" 		"%radius"
-				"Aura_Teams" 		"DOTA_UNIT_TARGET_TEAM_ENEMY"
-				"Aura_Types" 		"DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
-				"Aura_Flags" 		"DOTA_UNIT_TARGET_FLAG_NONE"
-				"Aura_ApplyToCaster" "0"
-			}
-			"modifier_slow_aura"
-			{
-				"Passive"			"0"
-				"IsHidden"			"0"
-				"IsBuff"			"0"
-				"IsDebuff"			"1"
-				"IsPurgable"		"0"
+	        }
+	        "modifier_dummy_slow_aura"
+	        {
+	            "Passive"           "0"
+	            "IsHidden"          "0"
+	            "IsDebuff"          "0"
+	            "Aura"              "modifier_slow_aura"
+	            "Aura_Radius"       "%radius"
+	            "Aura_Teams"        "DOTA_UNIT_TARGET_TEAM_ENEMY"
+	            "Aura_Types"        "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+	            "Aura_Flags"        "DOTA_UNIT_TARGET_FLAG_NONE"
+	            "Aura_ApplyToCaster" "0"
+	        }
+	        "modifier_slow_aura"
+	        {
+	            "Passive"           "0"
+	            "IsHidden"          "0"
+	            "IsBuff"            "0"
+	            "IsDebuff"          "1"
+	            "IsPurgable"        "0"
 	
-				"Attributes" 		"MODIFIER_ATTRIBUTE_MULTIPLE"
-				"Properties"
-				{
-				    "MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE" "%slow" 
-				}
-			}
-			"modifier_yari"
-			{
-				"Passive"			"0"
-				"IsHidden"			"0"
-				"IsDebuff"			"0"
+	            "Attributes"        "MODIFIER_ATTRIBUTE_MULTIPLE"
+	            "Properties"
+	            {
+	                "MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE" "%slow" 
+	            }
+	        }
+	        "modifier_yari"
+	        {
+	            "Passive"           "0"
+	            "IsHidden"          "1"
+	            "IsDebuff"          "0"
+	            
+	            "OnDestroy"
+	            {
+	                "RunScript"
+	                {
+	                    "ScriptFile"    "heroes/hero_vardor/vardor_piercing_shot.lua"
+	                    "Function"      "SubAbilityEnd"
 	
-				"Attributes"		"MODIFIER_ATTRIBUTE_MULTIPLE"
-				
+	                }
+	            }
+	        }
+	        "modifier_thinker"
+	        {
+	            "Passive"           "0"
+	            "IsHidden"          "1"
+	            "IsDebuff"          "0"
+	        
 	
-				"OnDestroy"
-				{
-					"RunScript"
-					{
-						"ScriptFile"	"heroes/hero_vardor/vardor_piercing_shot.lua"
-						"Function"		"SubAbilityEnd"
-						"sub_ability_name" "vardor_return_of_the_yari"
-	
-					}
-				}
-			}
-			"modifier_thinker"
-			{
-				"Passive"			"0"
-				"IsHidden"			"1"
-				"IsDebuff"			"0"
-			
-	
-				"OnCreated"
-				{
-					"RunScript"
-					{
-						"ScriptFile"	"heroes/hero_vardor/vardor_piercing_shot.lua"
-						"Function"		"ApplyMentalThrusts"
-					}
-				}
-				
-				"ThinkInterval"  "1.0"
-				"OnIntervalThink"
-				{
-					"RunScript"
-					{
-						"ScriptFile"	"heroes/hero_vardor/vardor_piercing_shot.lua"
-						"Function"		"IncreaseMentalThrusts"
-					}
-				}
-			}
-			"modifier_stuck"
-			{
-				"Passive"			"0"
-				"IsHidden"			"1"
-				"IsDebuff"			"1"
-		
-			}
-			"modifier_cooldown_reduction"
-			{
-				"Passive"			"0"
-				"IsHidden"			"1"
-				"IsDebuff"			"0"
-			
-				"Properties"
-				{
-					"MODIFIER_PROPERTY_COOLDOWN_REDUCTION_CONSTANT" "%cooldown_reduction" 
-				}
-			}
-		}
-		
+	            "OnCreated"
+	            {
+	                "RunScript"
+	                {
+	                    "ScriptFile"    "heroes/hero_vardor/vardor_piercing_shot.lua"
+	                    "Function"      "ApplyMentalThrusts"
+	                }
+	            }
+	            
+	            "ThinkInterval"  "%think_interval"
+	            "OnIntervalThink"
+	            {
+	                "RunScript"
+	                {
+	                    "ScriptFile"    "heroes/hero_vardor/vardor_piercing_shot.lua"
+	                    "Function"      "IncreaseMentalThrusts"
+	                }
+	            }
+	        }
+	        "modifier_stuck"
+	        {
+	            "Passive"           "0"
+	            "IsHidden"          "1"
+	            "IsDebuff"          "1"
+	    
+	        }
+	        "modifier_yari_throw"
+	        {
+	            "Passive"            "0"
+	            "IsHidden"            "0"
+	            "IsDebuff"            "1"
+	        }
+	    }
 	}  
 	"vardor_return_of_the_yari"
 	{
